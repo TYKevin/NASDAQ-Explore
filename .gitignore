@@ -1,6 +1,7 @@
 node_modules
 dist
 .npm-cache
+.idea/
 .DS_Store
 .env.local
 .env.*.local
