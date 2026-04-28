@@ -80,4 +80,4 @@ Vercel will automatically expose `api/qqq.js` as a serverless API route.
 
 ## Acknowledgements
 
-The QQQ Drawdown Dashboard module is based on Nick Wang's initial idea and design, originally expressed through Nick Wang's iOS Shortcuts workflow. Special thanks to Nick Wang for shaping the concept and visual direction of this first module.
+The QQQ Drawdown Dashboard module is based on [Nick Wang](https://github.com/nickwangk)'s initial idea and design, originally expressed through [Nick Wang](https://github.com/nickwangk)'s iOS Shortcuts workflow. Special thanks to [Nick Wang](https://github.com/nickwangk) for shaping the concept and visual direction of this first module.
