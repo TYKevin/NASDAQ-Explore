@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive } from 'vue'
+import { buildICostRecordUrl } from './icostShortcut.js'
 import { calculateDrawdown, calculateRangePosition } from './qqqDashboard.js'
 
 const REFRESH_INTERVAL_SECONDS = 10
@@ -9,7 +10,13 @@ const state = reactive({
   error: '',
   lastUpdated: '',
   secondsUntilRefresh: REFRESH_INTERVAL_SECONDS,
-  snapshot: null
+  snapshot: null,
+  tradeDialog: {
+    isOpen: false,
+    side: 'buy',
+    amount: '',
+    error: ''
+  }
 })
 
 let refreshTimerId = null
@@ -76,6 +83,32 @@ async function loadMarketData() {
     state.error = error instanceof Error ? error.message : 'Failed to load market data'
   } finally {
     state.isLoading = false
+  }
+}
+
+function openTradeDialog(side) {
+  state.tradeDialog.isOpen = true
+  state.tradeDialog.side = side
+  state.tradeDialog.amount = ''
+  state.tradeDialog.error = ''
+}
+
+function closeTradeDialog() {
+  state.tradeDialog.isOpen = false
+  state.tradeDialog.error = ''
+}
+
+function submitTradeRecord() {
+  try {
+    const recordUrl = buildICostRecordUrl({
+      side: state.tradeDialog.side,
+      amount: state.tradeDialog.amount
+    })
+
+    window.location.href = recordUrl
+    closeTradeDialog()
+  } catch (error) {
+    state.tradeDialog.error = error instanceof Error ? error.message : 'Unable to build iCost record URL'
   }
 }
 
@@ -216,6 +249,22 @@ onBeforeUnmount(() => {
         </div>
       </section>
 
+      <section class="panel quick-record-panel" aria-label="Quick iCost record">
+        <div class="quick-record-copy">
+          <strong>Quick iCost Record</strong>
+          <span>Book: Daily · Category: Investment · Currency: USD</span>
+        </div>
+
+        <div class="quick-record-actions">
+          <button class="trade-button trade-button--buy" type="button" @click="openTradeDialog('buy')">
+            Buy
+          </button>
+          <button class="trade-button trade-button--sell" type="button" @click="openTradeDialog('sell')">
+            Sell
+          </button>
+        </div>
+      </section>
+
       <section class="toolbar" aria-label="Market data status">
         <button class="refresh-button" type="button" :disabled="state.isLoading" @click="loadMarketData">
           {{ state.isLoading ? 'Refreshing...' : 'Refresh' }}
@@ -229,6 +278,41 @@ onBeforeUnmount(() => {
           </span>
         </div>
       </section>
+
+      <div v-if="state.tradeDialog.isOpen" class="modal-backdrop" role="presentation">
+        <section class="trade-modal" role="dialog" aria-modal="true" aria-labelledby="trade-modal-title">
+          <div class="trade-modal-header">
+            <h2 id="trade-modal-title">
+              {{ state.tradeDialog.side === 'buy' ? 'Record QQQ Buy' : 'Record QQQ Sell' }}
+            </h2>
+            <button class="icon-button" type="button" aria-label="Close" @click="closeTradeDialog">×</button>
+          </div>
+
+          <form class="trade-form" @submit.prevent="submitTradeRecord">
+            <label class="amount-field">
+              <span>Amount</span>
+              <input
+                v-model="state.tradeDialog.amount"
+                type="number"
+                inputmode="decimal"
+                min="0.01"
+                step="0.01"
+                placeholder="0.00"
+                autofocus
+              >
+            </label>
+
+            <p v-if="state.tradeDialog.error" class="error-text">{{ state.tradeDialog.error }}</p>
+
+            <div class="trade-modal-actions">
+              <button class="secondary-button" type="button" @click="closeTradeDialog">Cancel</button>
+              <button class="primary-button" type="submit">
+                Open iCost
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
     </section>
   </main>
 </template>

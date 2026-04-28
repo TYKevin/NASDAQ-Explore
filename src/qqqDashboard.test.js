@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { calculateDrawdown, calculateRangePosition, extractQqqSnapshot } from './qqqDashboard.js'
+import { buildICostRecordUrl } from './icostShortcut.js'
 
 describe('calculateDrawdown', () => {
   it('matches the shortcut drawdown math for a mild discount', () => {
@@ -102,5 +103,28 @@ describe('calculateRangePosition', () => {
       week52Low: 100,
       week52High: 200
     })).toBe(100)
+  })
+})
+
+describe('buildICostRecordUrl', () => {
+  it('builds an iCost expense URL for QQQ buy records in the Daily book', () => {
+    expect(buildICostRecordUrl({
+      side: 'buy',
+      amount: '123.45'
+    })).toBe('iCost://expense?amount=123.45&currency=USD&category=Investment&book=Daily&remark=QQQ+Buy')
+  })
+
+  it('builds an iCost income URL for QQQ sell records in the Daily book', () => {
+    expect(buildICostRecordUrl({
+      side: 'sell',
+      amount: 88
+    })).toBe('iCost://income?amount=88&currency=USD&category=Investment&book=Daily&remark=QQQ+Sell')
+  })
+
+  it('rejects invalid amounts', () => {
+    expect(() => buildICostRecordUrl({
+      side: 'buy',
+      amount: 'abc'
+    })).toThrow('Amount must be a positive number')
   })
 })
