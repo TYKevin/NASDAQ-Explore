@@ -22,6 +22,8 @@ const state = reactive({
 let refreshTimerId = null
 let countdownTimerId = null
 
+const keypadKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0']
+
 const dashboard = computed(() => {
   if (!state.snapshot) {
     return {
@@ -110,6 +112,35 @@ function submitTradeRecord() {
   } catch (error) {
     state.tradeDialog.error = error instanceof Error ? error.message : 'Unable to build iCost record URL'
   }
+}
+
+function appendAmountDigit(value) {
+  const amount = state.tradeDialog.amount
+
+  if (value === '.' && amount.includes('.')) {
+    return
+  }
+
+  if (value === '.' && amount === '') {
+    state.tradeDialog.amount = '0.'
+    return
+  }
+
+  if (amount.includes('.') && amount.split('.')[1].length >= 2) {
+    return
+  }
+
+  state.tradeDialog.amount = amount === '0' && value !== '.'
+    ? value
+    : `${amount}${value}`
+}
+
+function deleteAmountDigit() {
+  state.tradeDialog.amount = state.tradeDialog.amount.slice(0, -1)
+}
+
+function clearAmount() {
+  state.tradeDialog.amount = ''
 }
 
 function formatDateTime(value) {
@@ -289,18 +320,30 @@ onBeforeUnmount(() => {
           </div>
 
           <form class="trade-form" @submit.prevent="submitTradeRecord">
-            <label class="amount-field">
+            <div class="amount-field">
               <span>Amount</span>
-              <input
-                v-model="state.tradeDialog.amount"
-                type="number"
-                inputmode="decimal"
-                min="0.01"
-                step="0.01"
-                placeholder="0.00"
-                autofocus
+              <output class="amount-display">
+                {{ state.tradeDialog.amount || '0.00' }}
+              </output>
+            </div>
+
+            <div class="number-keypad" aria-label="Amount keypad">
+              <button
+                v-for="key in keypadKeys"
+                :key="key"
+                :class="['keypad-button', `keypad-button--${key === '.' ? 'dot' : key}`]"
+                type="button"
+                @click="appendAmountDigit(key)"
               >
-            </label>
+                {{ key }}
+              </button>
+              <button class="keypad-button keypad-button--backspace" type="button" @click="deleteAmountDigit">
+                Delete
+              </button>
+              <button class="keypad-button keypad-button--clear" type="button" @click="clearAmount">
+                Clear
+              </button>
+            </div>
 
             <p v-if="state.tradeDialog.error" class="error-text">{{ state.tradeDialog.error }}</p>
 

@@ -316,7 +316,8 @@ button {
 .trade-button,
 .primary-button,
 .secondary-button,
-.icon-button {
+.icon-button,
+.keypad-button {
   border: 1px solid rgb(255 255 255 / 14%);
   border-radius: 8px;
   color: #e5e7eb;
@@ -327,21 +328,24 @@ button {
   min-width: 72px;
   min-height: 36px;
   padding: 0 12px;
+  border-color: rgb(255 255 255 / 28%);
   font-weight: 800;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 16%), 0 8px 20px rgb(0 0 0 / 16%);
 }
 
 .trade-button--buy {
-  background: rgb(239 68 68 / 18%);
+  background: linear-gradient(180deg, rgb(248 113 113 / 36%), rgb(239 68 68 / 24%));
 }
 
 .trade-button--sell {
-  background: rgb(34 197 94 / 18%);
+  background: linear-gradient(180deg, rgb(74 222 128 / 36%), rgb(34 197 94 / 24%));
 }
 
 .trade-button:hover,
 .primary-button:hover,
 .secondary-button:hover,
-.icon-button:hover {
+.icon-button:hover,
+.keypad-button:hover {
   background-color: rgb(255 255 255 / 12%);
 }
 
@@ -414,6 +418,98 @@ button {
 
 .amount-field input:focus {
   border-color: rgb(56 189 248 / 70%);
+}
+
+.amount-display {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #e5e7eb;
+  background: rgb(255 255 255 / 6%);
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.number-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas:
+    "one two three"
+    "four five six"
+    "seven eight nine"
+    "dot zero zero"
+    "delete delete clear";
+  gap: 8px;
+}
+
+.keypad-button {
+  min-height: 44px;
+  background: rgb(255 255 255 / 8%);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.keypad-button--backspace,
+.keypad-button--clear {
+  font-size: 14px;
+}
+
+.keypad-button--backspace {
+  grid-area: delete;
+}
+
+.keypad-button--clear {
+  grid-area: clear;
+  background: rgb(239 68 68 / 16%);
+}
+
+.keypad-button--1 {
+  grid-area: one;
+}
+
+.keypad-button--2 {
+  grid-area: two;
+}
+
+.keypad-button--3 {
+  grid-area: three;
+}
+
+.keypad-button--4 {
+  grid-area: four;
+}
+
+.keypad-button--5 {
+  grid-area: five;
+}
+
+.keypad-button--6 {
+  grid-area: six;
+}
+
+.keypad-button--7 {
+  grid-area: seven;
+}
+
+.keypad-button--8 {
+  grid-area: eight;
+}
+
+.keypad-button--9 {
+  grid-area: nine;
+}
+
+.keypad-button--dot {
+  grid-area: dot;
+}
+
+.keypad-button--0 {
+  grid-area: zero;
 }
 
 .trade-modal-actions {
