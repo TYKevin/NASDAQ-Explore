@@ -282,11 +282,47 @@ button {
 
 .quick-record-panel {
   display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.quick-record-toggle {
+  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  margin-top: 16px;
+  width: 100%;
+  min-height: 54px;
+  border: 0;
   padding: 14px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.quick-record-toggle:hover {
+  background: rgb(255 255 255 / 5%);
+}
+
+.quick-record-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 50%;
+  color: #e5e7eb;
+  background: rgb(255 255 255 / 8%);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .quick-record-copy {
@@ -309,8 +345,8 @@ button {
 
 .quick-record-actions {
   display: flex;
-  flex: 0 0 auto;
   gap: 8px;
+  padding: 0 14px 14px;
 }
 
 .trade-button,
@@ -598,6 +634,17 @@ button {
   transform: translateX(-50%);
 }
 
+.range-marker--start .range-marker-label {
+  left: 0;
+  transform: none;
+}
+
+.range-marker--end .range-marker-label {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
 .range-labels span {
   display: flex;
   min-width: 0;
@@ -634,11 +681,6 @@ button {
 
   .range-marker-label {
     font-size: 11px;
-  }
-
-  .quick-record-panel {
-    align-items: stretch;
-    flex-direction: column;
   }
 
   .quick-record-actions {

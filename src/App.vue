@@ -11,6 +11,7 @@ const state = reactive({
   lastUpdated: '',
   secondsUntilRefresh: REFRESH_INTERVAL_SECONDS,
   snapshot: null,
+  quickRecordExpanded: false,
   tradeDialog: {
     isOpen: false,
     side: 'buy',
@@ -62,6 +63,18 @@ const rangeMarkerStyle = computed(() => ({
   left: `${dashboard.value.rangePosition}%`,
   background: dashboard.value.pctColor
 }))
+
+const rangeMarkerClass = computed(() => {
+  if (dashboard.value.rangePosition >= 88) {
+    return 'range-marker--end'
+  }
+
+  if (dashboard.value.rangePosition <= 12) {
+    return 'range-marker--start'
+  }
+
+  return ''
+})
 
 const highDate = computed(() => formatDate(state.snapshot?.week52HighTime))
 const lowDate = computed(() => formatDate(state.snapshot?.week52LowTime))
@@ -223,7 +236,7 @@ onBeforeUnmount(() => {
 
           <div class="price-range-bar">
             <span class="range-fill" :style="{ width: `${dashboard.rangePosition}%` }"></span>
-            <span class="range-marker" :style="rangeMarkerStyle">
+            <span :class="['range-marker', rangeMarkerClass]" :style="rangeMarkerStyle">
               <span class="range-marker-label">Current {{ dashboard.nowFmt }}</span>
             </span>
           </div>
@@ -280,13 +293,26 @@ onBeforeUnmount(() => {
         </div>
       </section>
 
-      <section class="panel quick-record-panel" aria-label="Quick iCost record">
-        <div class="quick-record-copy">
-          <strong>Quick iCost Record</strong>
-          <span>Book: Daily · Category: Investment · Currency: USD</span>
-        </div>
+      <section
+        :class="['panel', 'quick-record-panel', { 'quick-record-panel--expanded': state.quickRecordExpanded }]"
+        aria-label="Quick iCost record"
+      >
+        <button
+          class="quick-record-toggle"
+          type="button"
+          :aria-expanded="state.quickRecordExpanded"
+          @click="state.quickRecordExpanded = !state.quickRecordExpanded"
+        >
+          <span class="quick-record-copy">
+            <strong>Quick iCost Record</strong>
+            <span v-if="state.quickRecordExpanded">Book: Daily · Category: Investment · Currency: USD</span>
+          </span>
+          <span class="quick-record-chevron" aria-hidden="true">
+            {{ state.quickRecordExpanded ? '−' : '+' }}
+          </span>
+        </button>
 
-        <div class="quick-record-actions">
+        <div v-if="state.quickRecordExpanded" class="quick-record-actions">
           <button class="trade-button trade-button--buy" type="button" @click="openTradeDialog('buy')">
             Buy
           </button>
